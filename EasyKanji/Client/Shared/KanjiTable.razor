@@ -1,0 +1,16 @@
+﻿@using EasyKanji.Shared;
+
+<section>
+    @if (TableData != null)
+    {
+        foreach (Kanji kanji in TableData)
+        {
+            <KanjiTableCard DisplayedKanji="kanji" />
+        }
+    }
+</section>
+
+@code {
+    [Parameter]
+    public List<Kanji> TableData { get; set; }
+}

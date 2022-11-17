@@ -1,0 +1,42 @@
+﻿@page "/learn/{SectionId?}"
+@inject NavigationManager NavigationManager
+@using EasyKanji.Shared;
+@using EasyKanji.Client.Shared;
+
+<LearnSectionNav />
+
+<a class="learn-switch" href="/main/popular">Выйти из режима изучения</a>
+
+@switch (SectionId)
+{
+    case "by-meaning":
+        <PageTitle>Изучение кандзи - EasyKanji</PageTitle>
+        <LearnUI Mode="0" KanjiList="null" />
+        break;
+    case "by-writing":
+        <PageTitle>Изучение кандзи - EasyKanji</PageTitle>
+        <LearnUI Mode="1" KanjiList="null" />
+        break;
+    case "by-reading":
+        <PageTitle>Изучение кандзи - EasyKanji</PageTitle>
+        <LearnUI Mode="2" KanjiList="null" />
+        break;
+}
+
+@code
+{
+    [Parameter]
+    public string? SectionId { get; set; }
+
+    //[Parameter]
+    //[SupplyParameterFromQuery(Name = "s")]
+    //public string? SearchText { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (SectionId == null)
+        {
+            NavigationManager.NavigateTo("/learn/by-meaning");
+        }
+    }
+}

@@ -1,0 +1,17 @@
+﻿@using EasyKanji.Shared;
+
+<section>
+    <p>Learn UI will be here. Current mode is @Mode .</p>
+    @if (KanjiList != null)
+    {
+        
+    }
+</section>
+
+@code {
+    [Parameter]
+    public int Mode { get; set; }
+
+    [Parameter]
+    public List<Kanji> KanjiList { get; set; }
+}

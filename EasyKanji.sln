@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKanji.Server", "EasyKanji\Server\EasyKanji.Server.csproj", "{153EBC24-3237-4AC6-A2F3-1D02FF976F1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKanji.Server", "EasyKanji\Server\EasyKanji.Server.csproj", "{153EBC24-3237-4AC6-A2F3-1D02FF976F1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKanji.Client", "EasyKanji\Client\EasyKanji.Client.csproj", "{27906E35-051A-4F13-966F-822E7B6822AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKanji.Client", "EasyKanji\Client\EasyKanji.Client.csproj", "{27906E35-051A-4F13-966F-822E7B6822AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKanji.Shared", "EasyKanji\Shared\EasyKanji.Shared.csproj", "{D8E88595-5022-4446-8A43-2196BA7D5C35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKanji.Shared", "EasyKanji\Shared\EasyKanji.Shared.csproj", "{D8E88595-5022-4446-8A43-2196BA7D5C35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

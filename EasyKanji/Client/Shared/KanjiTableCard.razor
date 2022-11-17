@@ -1,0 +1,16 @@
+﻿@using EasyKanji.Shared;
+
+<button @onclick="SaveDeleteKanji">
+    <h1>@DisplayedKanji.Writing</h1>
+    <p>@DisplayedKanji.Meanings</p>
+</button>
+
+@code {
+    [Parameter]
+    public Kanji DisplayedKanji { get; set; }
+
+    private void SaveDeleteKanji()
+    {
+        
+    }
+}
