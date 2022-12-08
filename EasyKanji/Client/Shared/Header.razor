@@ -1,10 +1,20 @@
 ﻿<header>
-    <button title="Profile" @onclick="LogInOut">Profile</button>
+    <button title="Profile" @onclick="LogInOut">
+        <img style="width: 40px; height: 40px;" />
+        <p>@UserName</p>
+    </button>
 </header>
 
 @code {
+    private string UserName { get; set; }
+
     private void LogInOut()
     {
 
+    }
+
+    public Header()
+    {
+        UserName = "noname";
     }
 }
