@@ -1,4 +1,6 @@
+using EasyKanji.Server.Models;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyKanji.Server
 {
@@ -8,8 +10,11 @@ namespace EasyKanji.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllers();
             builder.Services.AddRazorPages();
+
+            string connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
+            builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
 
             var app = builder.Build();
 
@@ -29,7 +34,6 @@ namespace EasyKanji.Server
             app.UseStaticFiles();
 
             app.UseRouting();
-
 
             app.MapRazorPages();
             app.MapControllers();
