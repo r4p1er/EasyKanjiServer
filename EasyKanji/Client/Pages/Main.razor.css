@@ -1,0 +1,19 @@
+﻿.learn-switch {
+    font-size: 40px;
+
+    text-decoration: none;
+    color: black;
+
+    position: absolute;
+    right: 35px;
+    top: 0;
+}
+
+#search {
+    display: flex;
+    justify-content: center;
+
+    padding: 40px;
+
+    font-size: 25px;
+}
