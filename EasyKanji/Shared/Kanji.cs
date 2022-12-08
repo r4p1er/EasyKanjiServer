@@ -11,9 +11,9 @@ namespace EasyKanji.Shared
         public char Writing { get; set; }
         public string Meanings { get; set; }
         public List<string> OnReadings { get; set; }
-        public List<string> KunReadings { get; set; }
+        public Dictionary<string, string> KunReadings { get; set; }
 
-        public Kanji(char writing, string meanings, List<string> onReadings, List<string> kunReadings)
+        public Kanji(char writing, string meanings, List<string> onReadings, Dictionary<string, string> kunReadings)
         {
             Writing = writing;
             Meanings = meanings;
