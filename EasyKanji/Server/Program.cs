@@ -13,7 +13,11 @@ namespace EasyKanji.Server
             builder.Services.AddControllers();
             builder.Services.AddRazorPages();
 
-            string connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
+            string connection = "Server=(localdb)\\MSSQLLocalDB;Database=applicationdb;Trusted_Connection=True;";
+            if (builder.Environment.IsProduction())
+            {
+                connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
+            }
             builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
 
             var app = builder.Build();

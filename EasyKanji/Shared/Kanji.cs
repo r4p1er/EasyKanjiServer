@@ -8,6 +8,7 @@ namespace EasyKanji.Shared
 {
     public class Kanji
     {
+        public int Id { get; set; }
         public char Writing { get; set; }
         public string Meanings { get; set; }
         public List<string> OnReadings { get; set; }

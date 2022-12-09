@@ -43,10 +43,38 @@ namespace EasyKanji.Server.Controllers
                     kunReadings[pair[0]] = pair[1];
                 }
 
-                result.Add(new Shared.Kanji(writing, meanings, onReadings, kunReadings));
+                result.Add(new Shared.Kanji(writing, meanings, onReadings, kunReadings) { Id = item.Id});
             }
 
             return result;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Shared.Kanji>> GetKanji(int id)
+        {
+            var kanjiModel = await db.Kanjis.FindAsync(id);
+
+            if (kanjiModel == null)
+            {
+                return NotFound();
+            }
+
+            char writing = kanjiModel.Writing[0];
+            string meanings = kanjiModel.Meanings;
+            var onReadings = new List<string>();
+            foreach (var item in kanjiModel.OnReadings.Split('0'))
+            {
+                onReadings.Add(item);
+            }
+            var kunReadings = new Dictionary<string, string>();
+            foreach (var item in kanjiModel.KunReadings.Split('0'))
+            {
+                var keyValue = item.Split('1');
+                kunReadings[keyValue[0]] = keyValue[1];
+            }
+
+            var kanji = new Shared.Kanji(writing, meanings, onReadings, kunReadings) { Id = kanjiModel.Id};
+            return kanji;
         }
     }
 }
