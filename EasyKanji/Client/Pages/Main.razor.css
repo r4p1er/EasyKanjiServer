@@ -1,19 +1,39 @@
 ﻿.learn-switch {
-    font-size: 40px;
-
+    font-size: 30px;
     text-decoration: none;
     color: black;
-
     position: absolute;
     right: 35px;
-    top: 0;
+    top: 5px;
+    white-space: nowrap;
 }
 
 #search {
     display: flex;
     justify-content: center;
-
     padding: 40px;
-
     font-size: 25px;
+
+}
+
+#search input{
+    border: 2px solid;
+    border-radius: 15px 0px 0px 15px;
+    padding: 0 10px;
+}
+
+#search img {
+    position:center;
+    margin: -6px 0 0 -3px;
+}
+
+#search button{
+    width: 43.5px;
+    height: 43.5px;
+    border-radius: 0px 15px 15px 0px;
+    margin-left: -1px;
+}
+
+#search value{
+    
 }

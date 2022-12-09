@@ -14,13 +14,16 @@
     transition: background-color ease-in-out .2s;
 }
 
-    .nav_button:hover {
-        background-color: #c7c7c7;
-    }
+.nav_button:hover {
+    background-color: #c7c7c7;
+}
 
 .nav_active {
     background-color: #6a9aff !important;
     border-radius: 0 0 10px 10px;
+    border: 2px solid black;
+    border-top: none;
+    margin-top: -2px !important;
 }
 
 nav {
