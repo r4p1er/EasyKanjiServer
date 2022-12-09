@@ -18,9 +18,10 @@ namespace EasyKanji.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Shared.Kanji>>> GetKanjis()
+        public async Task<ActionResult<IEnumerable<Shared.Kanji>>> GetKanjis([FromQuery]int fromId = 1, [FromQuery]int count = 1)
         {
-            var kanjis = await db.Kanjis.ToListAsync();
+            if (fromId < 1 || count < 1) return BadRequest();
+            var kanjis = await db.Kanjis.Where(x => x.Id >= fromId && x.Id < fromId + count).ToListAsync();
             var result = new List<Shared.Kanji>();
             foreach (var item in kanjis)
             {
@@ -47,34 +48,6 @@ namespace EasyKanji.Server.Controllers
             }
 
             return result;
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Shared.Kanji>> GetKanji(int id)
-        {
-            var kanjiModel = await db.Kanjis.FindAsync(id);
-
-            if (kanjiModel == null)
-            {
-                return NotFound();
-            }
-
-            char writing = kanjiModel.Writing[0];
-            string meanings = kanjiModel.Meanings;
-            var onReadings = new List<string>();
-            foreach (var item in kanjiModel.OnReadings.Split('0'))
-            {
-                onReadings.Add(item);
-            }
-            var kunReadings = new Dictionary<string, string>();
-            foreach (var item in kanjiModel.KunReadings.Split('0'))
-            {
-                var keyValue = item.Split('1');
-                kunReadings[keyValue[0]] = keyValue[1];
-            }
-
-            var kanji = new Shared.Kanji(writing, meanings, onReadings, kunReadings) { Id = kanjiModel.Id};
-            return kanji;
         }
     }
 }
