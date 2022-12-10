@@ -1,5 +1,11 @@
 ﻿<nav>
-    <div class="nav_button nav_active"><NavLink href="/main/popular">Популярные кандзи</NavLink></div>
-    <div class="nav_button"><NavLink href="/main/saved">Сохранённые кандзи</NavLink></div>
-    <div class="nav_button"><NavLink href="/main/search">Поиск кандзи</NavLink></div>
+    <div class="nav_button @(SectionId == "popular" ? "nav_active": "")"><NavLink href="/main/popular"><p>Популярные кандзи</p></NavLink></div>
+    <div class="nav_button @(SectionId == "saved" ? "nav_active": "")"><NavLink href="/main/saved"><p>Сохранённые кандзи</p></NavLink></div>
+    <div class="nav_button @(SectionId == "search" ? "nav_active": "")"><NavLink href="/main/search"><p>Поиск кандзи</p></NavLink></div>
 </nav>
+
+@code
+{
+    [Parameter]
+    public string? SectionId { get; set; }
+}

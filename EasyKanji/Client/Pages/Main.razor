@@ -3,17 +3,17 @@
 @using EasyKanji.Shared;
 @using EasyKanji.Client.Shared;
 
-<MainSectionNav />
+<MainSectionNav SectionId="@SectionId" />
 
 <a class="learn-switch" href="/learn/by-meaning">
        Начать изучение
-    <img src="graduate-cap.svg" width="45px" height="45px" />
+    <img src="graduate-cap.svg" width="45" height="45" />
     </a>
 
 @switch (SectionId)
 {
     case "popular":
-        <PageTitle class="popular">Популярные кандзи - EasyKanji</PageTitle>
+        <PageTitle>Популярные кандзи - EasyKanji</PageTitle>
         <KanjiTable TableData="null" />
         break;
     case "saved":
@@ -25,7 +25,7 @@
         <form id="search" method="post">
             <input type="text" name="s" placeholder="Введите запрос" value="@SearchText" required>
             <button type="submit">
-                <img src="lupa.svg" width="29px" height="29px" />
+                <img src="lupa.svg" width="29" height="29" />
                 </button>
         </form>
         <KanjiTable TableData="null" />

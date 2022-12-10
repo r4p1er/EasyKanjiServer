@@ -1,5 +1,11 @@
 ﻿<nav>
-    <div class="nav_button nav_active"><NavLink class="nav_button" href="/learn/by-meaning">По значению</NavLink></div>
-    <div class="nav_button"><NavLink class="nav_button" href="/learn/by-writing">По написанию</NavLink></div>
-    <div class="nav_button"><NavLink class="nav_button" href="/learn/by-reading">По чтению</NavLink></div>
+    <div class="nav_button @(SectionId == "by-meaning" ? "nav_active": "")"><NavLink class="nav_button" href="/learn/by-meaning"><p>По значению</p></NavLink></div>
+    <div class="nav_button @(SectionId == "by-writing" ? "nav_active": "")"><NavLink class="nav_button" href="/learn/by-writing"><p>По написанию</p></NavLink></div>
+    <div class="nav_button @(SectionId == "by-reading" ? "nav_active": "")"><NavLink class="nav_button" href="/learn/by-reading"><p>По чтению</p></NavLink></div>
 </nav>
+
+@code
+{
+    [Parameter]
+    public string? SectionId { get; set; }
+}
