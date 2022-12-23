@@ -10,16 +10,18 @@ namespace EasyKanji.Shared
     {
         public int Id { get; set; }
         public char Writing { get; set; }
-        public string Meanings { get; set; }
+        public string Meaning { get; set; }
         public List<string> OnReadings { get; set; }
-        public Dictionary<string, string> KunReadings { get; set; }
+        public List<string> KunReadings { get; set; }
+        public Dictionary<string, string> Words { get; set; }
 
-        public Kanji(char writing, string meanings, List<string> onReadings, Dictionary<string, string> kunReadings)
+        public Kanji(char writing, string meaning, List<string> onReadings, List<string> kunReadings, Dictionary<string, string> words)
         {
             Writing = writing;
-            Meanings = meanings;
+            Meaning = meaning;
             OnReadings = onReadings;
             KunReadings = kunReadings;
+            Words = words;
         }
     }
 }
