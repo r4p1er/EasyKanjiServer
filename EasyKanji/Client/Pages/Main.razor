@@ -3,9 +3,12 @@
 @using EasyKanji.Shared;
 @using EasyKanji.Client.Shared;
 
-<MainSectionNav />
+<MainSectionNav SectionId="@SectionId" />
 
-<a class="learn-switch" href="/learn/by-meaning">Начать изучение</a>
+<a class="learn-switch" href="/learn/by-meaning">
+       Начать изучение
+    <img src="graduate-cap.svg" width="45" height="45" />
+    </a>
 
 @switch (SectionId)
 {
@@ -20,8 +23,10 @@
     case "search":
         <PageTitle>Поиск кандзи - EasyKanji</PageTitle>
         <form id="search" method="post">
-            <input type="text" name="s" placeholder="Введите запрос"  value="@SearchText" required>
-            <input type="submit">
+            <input type="text" name="s" placeholder="Введите запрос" value="@SearchText" required>
+            <button type="submit">
+                <img src="lupa.svg" width="29" height="29" />
+                </button>
         </form>
         <KanjiTable TableData="null" />
         break;

@@ -1,8 +1,14 @@
 ﻿.nav_button ::deep a {
     padding: 8px;
     font-size: 25px;
+    width: 100%;
+    height: 40px;
     text-decoration: none;
     color: black;
+}
+
+.nav_button ::deep a p {
+    margin: -35px 0;
     white-space: nowrap;
 }
 
@@ -12,15 +18,18 @@
     text-align: center;
     background-color: #ffffff;
     transition: background-color ease-in-out .2s;
+    border-radius: 0 0 10px 10px;
 }
 
-    .nav_button:hover {
-        background-color: #c7c7c7;
-    }
+.nav_button:hover {
+    background-color: #c7c7c7;
+}
 
 .nav_active {
     background-color: #6a9aff !important;
-    border-radius: 0 0 10px 10px;
+    border: 2px solid black;
+    border-top: none;
+    margin-top: -2px !important;
 }
 
 nav {

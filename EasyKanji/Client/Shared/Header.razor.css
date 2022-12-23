@@ -1,6 +1,7 @@
 header {
     width: 100%;
     height: 60px;
+    border-bottom: 2px solid black;
     background-color: #6a9aff;
 }
 
@@ -24,6 +25,7 @@ button {
 p {
     margin: 0 10px 0 10px;
     line-height: 40px;
+    font-size: 22px;
 }
 
 button:hover {

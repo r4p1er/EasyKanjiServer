@@ -3,9 +3,11 @@
 @using EasyKanji.Shared;
 @using EasyKanji.Client.Shared;
 
-<LearnSectionNav />
+<LearnSectionNav SectionId="@SectionId" />
 
-<a class="learn-switch" href="/main/popular">Выйти из режима изучения  <img  src="cross.svg" height="28" width="28"/></a>
+<a class="learn-switch" href="/main/popular">
+    Выйти из режима изучения  
+    <img  src="cross.svg" height="23" width="23"/></a>
 
 
 @switch (SectionId)
