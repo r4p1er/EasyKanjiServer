@@ -1,16 +1,12 @@
 ﻿@using EasyKanji.Shared;
 
-<button @onclick="SaveDeleteKanji">
+@if (DisplayedKanji != null)
+{
     <h1>@DisplayedKanji.Writing</h1>
     <p>@DisplayedKanji.Meaning</p>
-</button>
+}
 
 @code {
     [Parameter]
-    public Kanji DisplayedKanji { get; set; }
-
-    private void SaveDeleteKanji()
-    {
-        
-    }
+    public Kanji? DisplayedKanji { get; set; }
 }

@@ -5,12 +5,40 @@
     {
         foreach (Kanji kanji in TableData)
         {
-            <KanjiTableCard DisplayedKanji="kanji" />
+            @if (SelectedKanjiList.Contains(kanji))
+            {
+                <button class="active" @onclick="() => DeselectKanji(kanji)">
+                    <KanjiTableCard DisplayedKanji="kanji"/>
+                </button>
+            }
+            else
+            {
+                <button @onclick="() => SelectKanji(kanji)">
+                    <KanjiTableCard DisplayedKanji="kanji"/>
+                </button>
+            }
         }
     }
 </section>
 
 @code {
     [Parameter]
-    public List<Kanji> TableData { get; set; }
+    public List<Kanji>? TableData { get; set; }
+
+    private List<Kanji> SelectedKanjiList { get; set; }
+
+    public KanjiTable()
+    {
+        SelectedKanjiList = new List<Kanji>();
+    }
+
+    private void SelectKanji(Kanji kanji)
+    {
+        SelectedKanjiList.Add(kanji);
+    }
+    
+    private void DeselectKanji(Kanji kanji)
+    {
+        SelectedKanjiList.Remove(kanji);
+    }
 }
