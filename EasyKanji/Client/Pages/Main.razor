@@ -6,7 +6,7 @@
 <MainSectionNav SectionId="@SectionId" />
 
 <a class="learn-switch" href="/learn/by-meaning">
-       Начать изучение
+    <p>Начать изучение</p>
     <img src="graduate-cap.svg" width="45" height="45" />
     </a>
 
@@ -14,15 +14,11 @@
 {
     case "popular":
         <PageTitle>Популярные кандзи - EasyKanji</PageTitle>
-        <KanjiTable TableData="new List<Kanji> {
-            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji,
-            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, }" />
+        <KanjiTable TableData="new List<Kanji> { TestKanji1, TestKanji2, TestKanji3, TestKanji4, TestKanji5, TestKanji6 }" />
         break;
     case "saved":
         <PageTitle>Сохранённые кандзи - EasyKanji</PageTitle>
-        <KanjiTable TableData="new List<Kanji> {
-            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji,
-            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, }" />
+        <KanjiTable TableData="new List<Kanji> { TestKanji1, TestKanji2, TestKanji3, TestKanji4, TestKanji5, TestKanji6 }" />
         break;
     case "search":
         <PageTitle>Поиск кандзи - EasyKanji</PageTitle>
@@ -32,9 +28,7 @@
                 <img src="lupa.svg" width="29" height="29" />
                 </button>
         </form>
-        <KanjiTable TableData="new List<Kanji> {
-            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji,
-            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, }" />
+        <KanjiTable TableData="new List<Kanji> { TestKanji1, TestKanji2, TestKanji3, TestKanji4, TestKanji5, TestKanji6 }" />
         break;
 }
 
@@ -59,7 +53,7 @@
 
 
     // Just for test
-    private Kanji TestKanji = new Kanji(
+    private Kanji TestKanji1 = new Kanji(
         '人',
         "Человек",
         new List<string> { "ジン", "ニン" },
@@ -69,5 +63,65 @@
             { "ひと.となり", "натура, характер Чаще 為人" },
             { "ひと.らしい", "достойный [звания человека]" },
         }
+    );
+
+    private Kanji TestKanji2 = new Kanji(
+        '人',
+        "Другой человек",
+        new List<string> { "ジン", "ニン" },
+        new List<string> { "ひと" },
+        new Dictionary<string, string> {
+            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
+            { "ひと.となり", "натура, характер Чаще 為人" },
+            { "ひと.らしい", "достойный [звания человека]" },
+            }
+    );
+
+    private Kanji TestKanji3 = new Kanji(
+        '人',
+        "Ещё человек",
+        new List<string> { "ジン", "ニン" },
+        new List<string> { "ひと" },
+        new Dictionary<string, string> {
+            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
+            { "ひと.となり", "натура, характер Чаще 為人" },
+            { "ひと.らしい", "достойный [звания человека]" },
+            }
+    );
+
+    private Kanji TestKanji4 = new Kanji(
+        '人',
+        "Человек 4",
+        new List<string> { "ジン", "ニン" },
+        new List<string> { "ひと" },
+        new Dictionary<string, string> {
+            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
+            { "ひと.となり", "натура, характер Чаще 為人" },
+            { "ひと.らしい", "достойный [звания человека]" },
+            }
+    );
+
+    private Kanji TestKanji5 = new Kanji(
+        '人',
+        "Человек номер 5",
+        new List<string> { "ジン", "ニン" },
+        new List<string> { "ひと" },
+        new Dictionary<string, string> {
+            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
+            { "ひと.となり", "натура, характер Чаще 為人" },
+            { "ひと.らしい", "достойный [звания человека]" },
+            }
+    );
+
+    private Kanji TestKanji6 = new Kanji(
+        '人',
+        "Рокунин",
+        new List<string> { "ジン", "ニン" },
+        new List<string> { "ひと" },
+        new Dictionary<string, string> {
+            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
+            { "ひと.となり", "натура, характер Чаще 為人" },
+            { "ひと.らしい", "достойный [звания человека]" },
+            }
     );
 }

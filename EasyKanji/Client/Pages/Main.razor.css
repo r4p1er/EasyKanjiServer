@@ -4,17 +4,21 @@
     color: black;
     position: absolute;
     right: 35px;
-    top: 5px;
+    top: 12px;
     white-space: nowrap;
-}
-
-#search {
     display: flex;
-    justify-content: center;
-    padding: 40px;
-    font-size: 25px;
-
 }
+
+img{
+     margin: 0px;
+ }
+
+    #search {
+        display: flex;
+        justify-content: center;
+        padding: 40px;
+        font-size: 25px;
+    }
 
 #search input{
     border: 2px solid;
@@ -32,8 +36,4 @@
     height: 43.5px;
     border-radius: 0px 15px 15px 0px;
     margin-left: -1px;
-}
-
-#search value{
-    
 }
