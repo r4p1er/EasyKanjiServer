@@ -5,7 +5,7 @@
     {
         foreach (Kanji kanji in TableData)
         {
-            @if (SelectedKanjiList.Contains(kanji))
+            @if (GlobalVariables.LearnKanjiList.Contains(kanji))
             {
                 <button class="active" @onclick="() => DeselectKanji(kanji)">
                     <KanjiTableCard DisplayedKanji="kanji"/>
@@ -25,20 +25,13 @@
     [Parameter]
     public List<Kanji>? TableData { get; set; }
 
-    private List<Kanji> SelectedKanjiList { get; set; }
-
-    public KanjiTable()
-    {
-        SelectedKanjiList = new List<Kanji>();
-    }
-
     private void SelectKanji(Kanji kanji)
     {
-        SelectedKanjiList.Add(kanji);
+        GlobalVariables.LearnKanjiList.Add(kanji);
     }
     
     private void DeselectKanji(Kanji kanji)
     {
-        SelectedKanjiList.Remove(kanji);
+        GlobalVariables.LearnKanjiList.Remove(kanji);
     }
 }
