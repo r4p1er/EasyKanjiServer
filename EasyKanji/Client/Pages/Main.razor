@@ -14,11 +14,15 @@
 {
     case "popular":
         <PageTitle>Популярные кандзи - EasyKanji</PageTitle>
-        <KanjiTable TableData="null" />
+        <KanjiTable TableData="new List<Kanji> {
+            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji,
+            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, }" />
         break;
     case "saved":
         <PageTitle>Сохранённые кандзи - EasyKanji</PageTitle>
-        <KanjiTable TableData="null" />
+        <KanjiTable TableData="new List<Kanji> {
+            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji,
+            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, }" />
         break;
     case "search":
         <PageTitle>Поиск кандзи - EasyKanji</PageTitle>
@@ -28,7 +32,9 @@
                 <img src="lupa.svg" width="29" height="29" />
                 </button>
         </form>
-        <KanjiTable TableData="null" />
+        <KanjiTable TableData="new List<Kanji> {
+            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji,
+            TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, TestKanji, }" />
         break;
 }
 
@@ -48,4 +54,20 @@
             NavigationManager.NavigateTo("/main/popular");
         }
     }
+
+
+
+
+    // Just for test
+    private Kanji TestKanji = new Kanji(
+        '人',
+        "Человек",
+        new List<string> { "ジン", "ニン" },
+        new List<string> { "ひと" },
+        new Dictionary<string, string> {
+            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
+            { "ひと.となり", "натура, характер Чаще 為人" },
+            { "ひと.らしい", "достойный [звания человека]" },
+        }
+    );
 }
