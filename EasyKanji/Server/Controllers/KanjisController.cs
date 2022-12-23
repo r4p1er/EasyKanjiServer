@@ -27,24 +27,32 @@ namespace EasyKanji.Server.Controllers
             {
                 char writing = item.Writing[0];
 
-                string meanings = item.Meanings;
+                string meaning = item.Meaning;
 
-                var ons = item.OnReadings.Split('0');
+                var onItems = item.OnReadings.Split('0');
                 var onReadings = new List<string>();
-                foreach (var on in ons)
+                foreach (var on in onItems)
                 {
                     onReadings.Add(on);
                 }
 
-                var kunReadings = new Dictionary<string, string>();
-                var kunsAndMeanings = item.KunReadings.Split('0');
-                foreach (var p in kunsAndMeanings)
+                var kunItems = item.KunReadings.Split('0');
+                var kunReadings = new List<string>();
+                foreach (var kun in kunItems)
                 {
-                    var pair = p.Split('1');
-                    kunReadings[pair[0]] = pair[1];
+                    kunReadings.Add(kun);
                 }
 
-                result.Add(new Shared.Kanji(writing, meanings, onReadings, kunReadings) { Id = item.Id});
+                var wordsPairs = item.Words.Split('0');
+                var words = new Dictionary<string, string>();
+                foreach (var pair in wordsPairs)
+                {
+                    string key = pair.Split('1')[0];
+                    string value = pair.Split('1')[1];
+                    words[key] = value;
+                }
+
+                result.Add(new Shared.Kanji(writing, meaning, onReadings, kunReadings, words) { Id = item.Id});
             }
 
             return result;
