@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace EasyKanji.Server.Models
 {
@@ -23,11 +24,51 @@ namespace EasyKanji.Server.Models
         {
             if (Environment.IsDevelopment())
             {
-                modelBuilder.Entity<Kanji>().HasData(
-                new Kanji("人", "Человек", "ニン0ジン", "ひと", "ひと1человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то0ひと.となり1натура, характер Чаще 為人0ひと.らしい1достойный [звания человека]") { Id = 1 },
-                new Kanji("一", "Один", "イチ0イツ", "ひと.つ", "いち1один0ひと.つ1~[no] один; ~[no] один и тот же; ~[ni] во-первых, прежде всего; разок; немножко0いつ1одно [целое]0いつ.に1всецело, целиком; частично") { Id = 2 }
-                );
-
+                if (!File.Exists("./Models/kanjis.json"))
+                {
+                    Console.WriteLine(Directory.GetCurrentDirectory());
+                    throw new Exception();
+                }
+                else
+                {
+                    var jsonFile = new StreamReader("./Models/kanjis.json");
+                    string json = jsonFile.ReadToEnd();
+                    jsonFile.Close();
+                    var document = JsonDocument.Parse(json);
+                    Kanji[] kanjis = new Kanji[document.RootElement.GetArrayLength()];
+                    for (int i = 0; i < document.RootElement.GetArrayLength(); ++i)
+                    {
+                        string writing = document.RootElement[i].GetProperty("writing").GetString()!;
+                        string meaning = document.RootElement[i].GetProperty("meaning").GetString()!;
+                        string onReadings = "";
+                        foreach (var on in document.RootElement[i].GetProperty("onreadings").EnumerateArray())
+                        {
+                            onReadings += on.ToString() + "0";
+                        }
+                        onReadings = onReadings.Substring(0, onReadings.Length - 1);
+                        string kunReadings = "";
+                        foreach (var kun in document.RootElement[i].GetProperty("kunreadings").EnumerateArray())
+                        {
+                            kunReadings += kun.ToString() + "0";
+                        }
+                        kunReadings = kunReadings.Substring(0, kunReadings.Length - 1);
+                        string words = "";
+                        if (document.RootElement[i].GetProperty("words").GetArrayLength() != 0)
+                        {
+                            foreach (var dict in document.RootElement[i].GetProperty("words").EnumerateArray())
+                            {
+                                foreach (var p in dict.EnumerateObject())
+                                {
+                                    words += p.Name + "1" + p.Value + "0";
+                                }
+                            }
+                            words = words.Substring(0, words.Length - 1);
+                        }
+                        var kanji = new Kanji(writing, meaning, onReadings, kunReadings, words) { Id = i + 1 };
+                        kanjis[i] = kanji;
+                    }
+                    modelBuilder.Entity<Kanji>().HasData(kanjis);
+                }
             }
         }
     }
