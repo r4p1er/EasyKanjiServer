@@ -22,12 +22,12 @@ button {
     transition: background-color ease-in-out .2s;
 }
 
+    button:hover {
+        background-color: #5882d9ff;
+    }
+
 p {
     margin: 0 10px 0 10px;
     line-height: 40px;
     font-size: 22px;
-}
-
-button:hover {
-    background-color: #5882d9ff;
 }

@@ -1,0 +1,54 @@
+﻿@using EasyKanji.Shared;
+
+@if (DisplayedKanji != null)
+{
+    switch (CardMode)
+    {
+        case 0: // By meaning
+            if (FrontFace)
+            {
+                <h1>@DisplayedKanji.Meaning</h1>
+                <table>
+                    <tr>
+                        <td><p>Оны: </p></td>
+                        <td><p>@DisplayedKanji.OnReadings.Count</p></td>
+                    </tr>
+                </table>
+            }
+            else
+            {
+                <h1>@DisplayedKanji.Writing</h1>
+                <table>
+                    <tr>
+                        <td><p>Оны: </p></td>
+                        <td> @foreach (string onReading in DisplayedKanji.OnReadings)
+                            { <p>@onReading</p> }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><p>Куны: </p></td>
+                        <td> @foreach (string kunReading in DisplayedKanji.KunReadings)
+                            { <p>@kunReading</p> }
+                        </td>
+                    </tr>
+                </table>
+            }
+            break;
+        case 1: // By writing
+            break;
+
+        case 2: // By reading
+            break;
+    }
+}
+
+@code {
+    [Parameter]
+    public int CardMode { get; set; }
+
+    [Parameter]
+    public Kanji? DisplayedKanji { get; set; }
+
+    [Parameter]
+    public bool FrontFace { get; set; }
+}

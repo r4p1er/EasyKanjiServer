@@ -1,10 +1,47 @@
 ﻿@using EasyKanji.Shared;
+@inject IJSRuntime JS
 
 <section>
-    <p>Learn UI will be here. Current mode is @Mode .</p>
-    @if (KanjiList != null)
+    @if (GlobalVariables.LearnKanjiList != null && GlobalVariables.LearnKanjiList.Count > 0)
     {
-        
+        switch (Mode)
+        {
+            case 0: // By meaning
+                for (int i = -1; i <= GlobalVariables.LearnKanjiList.Count; i++)
+                {
+                    if (i == -1 || i == GlobalVariables.LearnKanjiList.Count)
+                    {
+                        <button class="kanji-card
+                                       @((i != currentKanjiIndex &&
+                                          i != currentKanjiIndex + 1 &&
+                                          i != currentKanjiIndex - 1) ? "hiden-card" : "")"></button>
+                        continue;
+                    }
+
+                    <button @onclick="TurnCard" class="@(((i == currentKanjiIndex - 1) ||
+                                                (i == currentKanjiIndex && !frontFace)) ? "" :
+                                                "front-face-card")
+                               kanji-card
+                               @((i == currentKanjiIndex - 1) ? "left-side-card" :
+                                 (i == currentKanjiIndex    ) ? "main-card" :
+                                 (i == currentKanjiIndex + 1) ? "right-side-card" :
+                                                                "hiden-card")">
+                        <LearnUICard
+                            CardMode="Mode"
+                            FrontFace="@((i == currentKanjiIndex - 1) ? false :
+                                         (i == currentKanjiIndex    ) ? frontFace :
+                                                                        true)"
+                            DisplayedKanji="GlobalVariables.LearnKanjiList[i]" />
+                    </button>
+                }
+                break;
+
+            case 1: // By writing
+                break;
+
+            case 2: // By reading
+                break;
+        }
     }
 </section>
 
@@ -12,6 +49,68 @@
     [Parameter]
     public int Mode { get; set; }
 
-    [Parameter]
-    public List<Kanji> KanjiList { get; set; }
+    private DotNetObjectReference<LearnUI>? objRef;
+
+    private int currentKanjiIndex = 0;
+
+    private bool frontFace = true;
+
+    private void TurnCard()
+    {
+        frontFace = !frontFace;
+    }
+
+    protected override void OnInitialized()
+    {
+        objRef = DotNetObjectReference.Create(this);
+        JS.InvokeAsync<string>("startKeyMonitoring", objRef);
+    }
+
+    [JSInvokable]
+    public void KeyHandler(string key)
+    {
+        switch (key.ToString())
+        {
+            case "up":
+                break;
+            case "down":
+                break;
+            case "left":
+                ScrollLeft();
+                break;
+            case "right":
+                ScrollRight();
+                break;
+        }
+    }
+
+    private void ScrollLeft()
+    {
+        if (!frontFace)
+        {
+            frontFace = true;
+            StateHasChanged();
+        }
+        else if (currentKanjiIndex > 0)
+        {
+            currentKanjiIndex--;
+            frontFace = false;
+            StateHasChanged();
+        }
+    }
+
+    private void ScrollRight()
+    {
+        if (frontFace)
+        {
+            frontFace = false;
+            StateHasChanged();
+        }
+        else if (currentKanjiIndex < GlobalVariables.LearnKanjiList.Count - 1)
+        {
+            currentKanjiIndex++;
+            frontFace = true;
+            StateHasChanged();
+        }
+    }
 }
