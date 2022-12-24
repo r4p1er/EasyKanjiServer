@@ -2,6 +2,9 @@
 @inject NavigationManager NavigationManager
 @using EasyKanji.Shared;
 @using EasyKanji.Client.Shared;
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
 
 <MainSectionNav SectionId="@SectionId" />
 
@@ -14,21 +17,22 @@
 {
     case "popular":
         <PageTitle>Популярные кандзи - EasyKanji</PageTitle>
-        <KanjiTable TableData="new List<Kanji> { TestKanji1, TestKanji2, TestKanji3, TestKanji4, TestKanji5, TestKanji6 }" />
+        <KanjiTable TableData="popularKanji" />
         break;
     case "saved":
         <PageTitle>Сохранённые кандзи - EasyKanji</PageTitle>
-        <KanjiTable TableData="new List<Kanji> { TestKanji1, TestKanji2, TestKanji3, TestKanji4, TestKanji5, TestKanji6 }" />
+        <KanjiTable TableData="savedKanji" />
         break;
     case "search":
         <PageTitle>Поиск кандзи - EasyKanji</PageTitle>
-        <form id="search" method="post">
-            <input type="text" name="s" placeholder="Введите запрос" value="@SearchText" required>
-            <button type="submit">
+        <form id="search" onsubmit="return false">
+            <input type="text" name="s" placeholder="Введите запрос" value="@SearchText"
+                @oninput="(e) => {if (e.Value != null) SearchText = e.Value.ToString();}" required>
+            <button type="submit" @onclick="() => FetchSearchResult(SearchText)">
                 <img src="lupa.svg" width="29" height="29" />
-                </button>
+            </button>
         </form>
-        <KanjiTable TableData="new List<Kanji> { TestKanji1, TestKanji2, TestKanji3, TestKanji4, TestKanji5, TestKanji6 }" />
+        <KanjiTable TableData="searchResult" />
         break;
 }
 
@@ -41,97 +45,37 @@
     [SupplyParameterFromQuery(Name = "s")]
     public string? SearchText { get; set; }
 
-    protected override void OnInitialized()
+    private List<Kanji>? popularKanji;
+    private List<Kanji>? savedKanji;
+    private List<Kanji>? searchResult;
+
+    protected override async void OnInitialized()
     {
         if (SectionId == null)
         {
             NavigationManager.NavigateTo("/main/popular");
         }
+
+        if (SectionId == "search") await FetchSearchResult(SearchText);
+        else
+        {
+            await FetchPopularKanji();
+            // + Fetch saved
+        }
     }
 
-
-
-
-    // Just for test
-    private Kanji TestKanji1 = new Kanji(
-        '人',
-        "Человек",
-        new List<string> { "ジン", "ニン" },
-        new List<string> { "ひと" },
-        new Dictionary<string, string> {
-            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
-            { "ひと.となり", "натура, характер Чаще 為人" },
-            { "ひと.らしい", "достойный [звания человека]" },
-        }
-    );
-
-    private Kanji TestKanji2 = new Kanji(
-        '人',
-        "Другой человек",
-        new List<string> { "ジン", "ニン" },
-        new List<string> { "ひと" },
-        new Dictionary<string, string> {
-            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
-            { "ひと.となり", "натура, характер Чаще 為人" },
-            { "ひと.らしい", "достойный [звания человека]" },
-            }
-    );
-
-    private Kanji TestKanji3 = new Kanji(
-        '人',
-        "Ещё человек",
-        new List<string> { "ジン", "ニン" },
-        new List<string> { "ひと" },
-        new Dictionary<string, string> {
-            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
-            { "ひと.となり", "натура, характер Чаще 為人" },
-            { "ひと.らしい", "достойный [звания человека]" },
-            }
-    );
-
-    private Kanji TestKanji4 = new Kanji(
-        '人',
-        "Человек 4",
-        new List<string> { "ジン", "ニン" },
-        new List<string> { "ひと" },
-        new Dictionary<string, string> {
-            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
-            { "ひと.となり", "натура, характер Чаще 為人" },
-            { "ひと.らしい", "достойный [звания человека]" },
-            }
-    );
-
-    private Kanji TestKanji5 = new Kanji(
-        '人',
-        "Человек номер 5",
-        new List<string> { "ジン", "ニン" },
-        new List<string> { "ひと" },
-        new Dictionary<string, string> {
-            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
-            { "ひと.となり", "натура, характер Чаще 為人" },
-            { "ひと.らしい", "достойный [звания человека]" },
-            }
-    );
-
-    private Kanji TestKanji6 = new Kanji(
-        '人',
-        "Рокунин",
-        new List<string> { "ジン", "ニン" },
-        new List<string> { "ひと" },
-        new Dictionary<string, string> {
-            { "ひと", "человек; люди; личность, характер; другой, другие; кто [-нибудь] , кто-то" },
-            { "ひと.となり", "натура, характер Чаще 為人" },
-            { "ひと.らしい", "достойный [звания человека]" },
-            }
-    );
-
-    public Main()
+    private async Task FetchPopularKanji(int fromId = 0, int count = 200)
     {
-        TestKanji1.Id = 0;
-        TestKanji2.Id = 1;
-        TestKanji3.Id = 2;
-        TestKanji4.Id = 3;
-        TestKanji5.Id = 4;
-        TestKanji6.Id = 5;
+        if (fromId < 0 || count < 1) return;
+        //popularKanji = await Http.GetFromJsonAsync<List<Kanji>>($"url/api/kanjis?fromid={fromId}&count={count}");
+    }
+
+    //private async Task FetchSavedKanji(int fromId = 0, int count = 200) { }
+
+    private async Task FetchSearchResult(string? query)
+    {
+        if (query == null || query == "") return;
+        NavigationManager.NavigateTo($"/main/search?s={SearchText}");
+        //searchResult = await Http.GetFromJsonAsync<List<Kanji>>($"url/api/kanjis/search?query={query}");
     }
 }
