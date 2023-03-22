@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using EasyKanjiServer.Models.DTOs;
 
 namespace EasyKanjiServer.Controllers
 {
@@ -22,22 +23,22 @@ namespace EasyKanjiServer.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(string username, string password)
+        public async Task<ActionResult> Login(TokenDTO dto)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == dto.Username);
             if (user == null)
             {
                 return NotFound();
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(password + _configuration["AuthOptions:PEPPER"], user.PasswordHash))
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password + _configuration["AuthOptions:PEPPER"], user.PasswordHash))
             {
                 return BadRequest();
             }
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Name, dto.Username),
                 new Claim(ClaimTypes.Role, user.Role)
             };
             var jwt = new JwtSecurityToken(
@@ -51,16 +52,16 @@ namespace EasyKanjiServer.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(string username, string password)
+        public async Task<ActionResult> Register(TokenDTO dto)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == dto.Username);
             if (user != null)
             {
                 return BadRequest();
             }
 
-            user = new User { Username = username, PasswordHash = BCrypt.Net.BCrypt.HashPassword(password + _configuration["AuthOptions:PEPPER"]), Role = "User" };
-            _db.Users.Add(user);
+            user = new User { Username = dto.Username, PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password + _configuration["AuthOptions:PEPPER"]), Role = "User" };
+            await _db.Users.AddAsync(user);
             await _db.SaveChangesAsync();
 
             return Ok();
