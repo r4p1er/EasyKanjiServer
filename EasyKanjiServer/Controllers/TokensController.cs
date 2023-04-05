@@ -22,8 +22,8 @@ namespace EasyKanjiServer.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("login")]
-        public async Task<ActionResult> Login(TokenDTO dto)
+        [HttpPost]
+        public async Task<ActionResult> GetToken(TokenDTO dto)
         {
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == dto.Username);
             if (user == null)
@@ -49,22 +49,6 @@ namespace EasyKanjiServer.Controllers
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AuthOptions:KEY"]!)), SecurityAlgorithms.HmacSha256)
             );
             return new JsonResult(new JwtSecurityTokenHandler().WriteToken(jwt));
-        }
-
-        [HttpPost("register")]
-        public async Task<ActionResult> Register(TokenDTO dto)
-        {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == dto.Username);
-            if (user != null)
-            {
-                return BadRequest();
-            }
-
-            user = new User { Username = dto.Username, PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password + _configuration["AuthOptions:PEPPER"]), Role = "User" };
-            await _db.Users.AddAsync(user);
-            await _db.SaveChangesAsync();
-
-            return Ok();
         }
     }
 }
