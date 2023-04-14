@@ -31,9 +31,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-var app = builder.Build();
+builder.Services.AddCors();
 
-app.UseCors(policy => policy.WithOrigins(app.Configuration["Cors:Origin"]!));
+var app = builder.Build();
+app.UseCors(policy => policy.WithOrigins(app.Configuration["Cors:Origin"]!).AllowAnyHeader().AllowAnyMethod());
 app.UseMiddleware<JWTCheckMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
