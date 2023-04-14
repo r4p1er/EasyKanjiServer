@@ -33,6 +33,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 var app = builder.Build();
 
+app.UseCors(policy =>
+{
+    if (app.Environment.IsDevelopment())
+    {
+        policy.AllowAnyOrigin();
+    }
+    else
+    {
+        policy.WithOrigins(app.Configuration["Cors:Origin"]!);
+    }
+});
 app.UseMiddleware<JWTCheckMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
