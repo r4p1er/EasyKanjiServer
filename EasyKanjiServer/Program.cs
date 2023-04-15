@@ -7,6 +7,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy => policy.WithOrigins(builder.Configuration["Cors:Origin"]!));
+});
+
 string connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
 builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(connection));
 
@@ -31,10 +36,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-builder.Services.AddCors();
-
 var app = builder.Build();
-app.UseCors(policy => policy.WithOrigins(app.Configuration["Cors:Origin"]!).AllowAnyHeader().AllowAnyMethod());
+app.UseCors();
 app.UseMiddleware<JWTCheckMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
