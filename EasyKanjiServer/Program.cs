@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy => policy.WithOrigins(builder.Configuration["Cors:Origin"]!));
+    options.AddDefaultPolicy(policy => policy.WithOrigins(builder.Configuration["Cors:Origin"]!).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 
 string connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
