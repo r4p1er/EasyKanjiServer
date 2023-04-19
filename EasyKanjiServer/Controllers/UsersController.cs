@@ -60,7 +60,7 @@ namespace EasyKanjiServer.Controllers
 
             if (user != null)
             {
-                return BadRequest();
+                return BadRequest(new { errors = "Such a user already exists." });
             }
 
             user = new User { Username = dto.Username, PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password + _configuration["AuthOptions:PEPPER"]), Role = "User" };
@@ -77,51 +77,52 @@ namespace EasyKanjiServer.Controllers
         {
             if (id != dto.Id)
             {
-                return BadRequest();
+                return BadRequest(new { errors = "Id from route params and object id should be equal." });
             }
 
             var user = await _db.Users.Include(x => x.Kanjis).FirstOrDefaultAsync(x => x.Id == id);
 
             if (user == null)
             {
-                return NotFound();
+                return NotFound(new { errors = "There is no such a user." });
             }
 
             bool self = user.Username == User.FindFirstValue(ClaimTypes.Name);
 
             if (!self && User.IsInRole("User"))
             {
-                return Forbid();
+                return BadRequest(new { errors = "You can't edit other people's data." });
             }
 
             if (user.Username != dto.Username && !self)
             {
-                return Forbid();
+                return BadRequest(new { errors = "Only the user can edit its own username." });
             }
 
             if (user.Username != dto.Username && await _db.Users.FirstOrDefaultAsync(x => x.Username == dto.Username) != null)
             {
-                return BadRequest();
+                return BadRequest(new { errors = "This username is already taken." });
             }
 
             if (!BCrypt.Net.BCrypt.Verify(dto.Password + _configuration["AuthOptions:PEPPER"], user.PasswordHash) && !self)
             {
-                return Forbid();
+                return BadRequest(new { errors = "Only the user can edit its own password." });
             }
 
             if (user.Role != dto.Role && (User.IsInRole("User") || user.Username == "admin"))
             {
-                return Forbid();
+                return BadRequest(new { errors = "You are not allowed to change role of this user." });
             }
 
             if (dto.Role != "User" && dto.Role != "Admin")
             {
-                return BadRequest();
+                return BadRequest(new { errors = "There is no such a role." });
             }
 
             user.Username = dto.Username;
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password + _configuration["AuthOptions:PEPPER"]);
             user.Role = dto.Role;
+            user.Kanjis = dto.Kanjis;
             await _db.SaveChangesAsync();
 
             string header = HttpContext.Request.Headers.ContainsKey(HeaderNames.Authorization) ? HttpContext.Request.Headers[HeaderNames.Authorization].ToString() : string.Empty;
@@ -147,12 +148,12 @@ namespace EasyKanjiServer.Controllers
 
             if (user == null)
             {
-                return NotFound();
+                return NotFound(new { errors = "There is no such a user." });
             }
 
             if ((user.Username != User.FindFirstValue(ClaimTypes.Name) && User.IsInRole("User")) || user.Username == "admin")
             {
-                return Forbid();
+                return BadRequest(new { errors = "You can't delete this user." });
             }
 
             _db.Users.Remove(user);
@@ -163,7 +164,12 @@ namespace EasyKanjiServer.Controllers
 
         private static UserDTO UserToDTO(User user)
         {
-            return new UserDTO { Id = user.Id, Username = user.Username, Role = user.Role, Kanjis = user.Kanjis };
+            return new UserDTO { Id = user.Id, Username = user.Username, Role = user.Role, Kanjis = KanjisToKanjiDTOs(user.Kanjis) };
+        }
+
+        private static List<KanjiDTO> KanjisToKanjiDTOs(List<Kanji> kanjis)
+        {
+            return kanjis.Select(x => new KanjiDTO { Id = x.Id, KunReadings = x.KunReadings, OnReadings = x.OnReadings, Meaning = x.Meaning, Writing = x.Writing }).ToList();
         }
     }
 }
