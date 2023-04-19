@@ -21,7 +21,7 @@ namespace EasyKanjiServer.Controllers
             _db = db;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:min(1)}")]
         public async Task<ActionResult<KanjiDTO>> GetKanji(int id)
         {
             var kanji = await _db.Kanjis.FindAsync(id);
@@ -49,8 +49,8 @@ namespace EasyKanjiServer.Controllers
             return kanjis;
         }
 
-        [HttpGet("{listName}")]
-        public async Task<ActionResult<IEnumerable<KanjiDTO>>> GetKanjis(string listName, int startIndex, int endIndex)
+        [HttpGet("{listName:alpha}")]
+        public async Task<ActionResult<IEnumerable<KanjiDTO>>> GetKanjisByListName(string listName, int startIndex = 1, int endIndex = 1)
         {
             var kanjis = new List<KanjiDTO>();
             
