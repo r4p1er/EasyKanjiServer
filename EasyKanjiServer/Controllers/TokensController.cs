@@ -29,12 +29,12 @@ namespace EasyKanjiServer.Controllers
 
             if (user == null)
             {
-                return NotFound();
+                return NotFound(new { errors = "There is no such a user." });
             }
 
             if (!BCrypt.Net.BCrypt.Verify(dto.Password + _configuration["AuthOptions:PEPPER"], user.PasswordHash))
             {
-                return BadRequest();
+                return BadRequest(new { errors = "Password is incorrect." });
             }
 
             var claims = new List<Claim>
