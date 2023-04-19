@@ -40,7 +40,7 @@ namespace EasyKanjiServer.Controllers
 
             if (user == null)
             {
-                return NotFound();
+                return NotFound(new { errors = "There is no such a user." });
             }
 
             return UserToDTO(user);

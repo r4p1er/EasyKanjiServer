@@ -28,104 +28,126 @@ namespace EasyKanjiServer.Controllers
 
             if (kanji == null)
             {
-                return NotFound();
+                return NotFound(new { errors = "There is no such a kanji." });
             }
+
             return KanjiToDTO(kanji);
 
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<KanjiDTO>>> GetKanjis(int[] ids)
+        public async Task<ActionResult<IEnumerable<KanjiDTO>>> GetKanjis([FromQuery]int[] ids)
         {
             var kanjis = new List<KanjiDTO>();
+
             foreach (var id in ids)
             {
                 var kanji = await _db.Kanjis.FindAsync(id);
+
                 if (kanji == null)
-                    return NotFound();
+                    return NotFound(new { errors = "There is no such a kanji." });
                 else
                     kanjis.Add(KanjiToDTO(kanji));
             }
+
             return kanjis;
         }
 
         [HttpGet("{listName:alpha}")]
         public async Task<ActionResult<IEnumerable<KanjiDTO>>> GetKanjisByListName(string listName, int startIndex = 1, int endIndex = 1)
         {
+            if (startIndex > endIndex)
+            {
+                return BadRequest(new { errors = "Start id can't be greater than end id." });
+            }
+
             var kanjis = new List<KanjiDTO>();
             
             if (listName == "popular")
             {
-                
                 for (int i = startIndex; i <= endIndex; i++)
                 {
                     var kanji = await _db.Kanjis.FindAsync(i);
+
                     if (kanji == null)
-                        return NotFound();
+                        return NotFound(new { errors = "There is no such a kanji." });
+
                     kanjis.Add(KanjiToDTO(kanji));
                 }
+
                 return kanjis;
             }
+
             if (listName == "favorite")
             {
-                
                 var user = await _db.Users.Include(v => v.Kanjis).FirstOrDefaultAsync(v => v.Username == User.FindFirstValue(ClaimTypes.Name));
+
                 for (int i = startIndex; i <= endIndex; i++)
                 {
                     var kanji = user!.Kanjis.FirstOrDefault(v => v.Id == i);
+
                     if (kanji == null)
-                        return NotFound();
+                        return NotFound(new { errors = "There is no such a kanji." });
                     else
                         kanjis.Add(KanjiToDTO(kanji));
                 }
+
                 return kanjis;
             }
-            else 
-                return NotFound();
+            
+            return NotFound(new { errors = "There is no such a list." });
         }
 
         
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<Kanji>> PostKanji(KanjiPostDTO kanjiDTO)
+        public async Task<ActionResult<KanjiDTO>> PostKanji(KanjiPostDTO kanjiDTO)
         {
-            if (string.IsNullOrWhiteSpace(kanjiDTO.Writing) || string.IsNullOrWhiteSpace(kanjiDTO.OnReadings) || string.IsNullOrWhiteSpace(kanjiDTO.KunReadings) || string.IsNullOrWhiteSpace(kanjiDTO.Meaning))
-               return BadRequest();
-            var kanji = new Kanji { Writing = kanjiDTO.Writing, OnReadings = kanjiDTO.OnReadings, KunReadings = kanjiDTO.KunReadings, Meaning=kanjiDTO.Meaning };
+            if (string.IsNullOrWhiteSpace(kanjiDTO.OnReadings) && string.IsNullOrWhiteSpace(kanjiDTO.KunReadings))
+                return BadRequest(new { errors = "On readings and kun readings can't be unspecified at the same time." });
+
+            var kanji = await _db.Kanjis.FirstOrDefaultAsync(x => x.Writing == kanjiDTO.Writing);
+
+            if (kanji != null)
+            {
+                return BadRequest(new { errors = "This kanji already exists." });
+            }
+
+            kanji = new Kanji { Writing = kanjiDTO.Writing, OnReadings = kanjiDTO.OnReadings, KunReadings = kanjiDTO.KunReadings, Meaning = kanjiDTO.Meaning };
             await _db.Kanjis.AddAsync(kanji);
             await _db.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetKanji), new {id =  kanji.Id}, kanji);
+            return CreatedAtAction(nameof(GetKanji), new {id =  kanji.Id}, kanjiDTO);
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutKanji(int id, Kanji kanji)
+        public async Task<IActionResult> PutKanji(int id, KanjiPutDTO dto)
         { 
-            if (id != kanji.Id)
+            if (id != dto.Id)
             {
-                return BadRequest();
+                return BadRequest(new { errors = "Id from route params and object id should be equal." });
             }
 
-            _db.Entry(kanji).State = EntityState.Modified;
+            if (string.IsNullOrWhiteSpace(dto.OnReadings) && string.IsNullOrWhiteSpace(dto.KunReadings))
+            {
+                return BadRequest(new { errors = "On readings and kun readings can't be unspecified at the same time." });
+            }
 
-            try
+            var kanji = await _db.Kanjis.FindAsync(dto.Id);
+
+            if (kanji == null)
             {
-                await _db.SaveChangesAsync();
+                return BadRequest(new { errors = "There is no such a kanji." });
             }
-            catch (DbUpdateConcurrencyException) 
-            {
-                if (!KanjiExists(id).Result)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-                
-            }
+
+            kanji.Writing = dto.Writing;
+            kanji.KunReadings = dto.KunReadings;
+            kanji.OnReadings = dto.OnReadings;
+            kanji.Meaning = dto.Meaning;
+            await _db.SaveChangesAsync();
+
             return NoContent();
         }
 
@@ -134,9 +156,10 @@ namespace EasyKanjiServer.Controllers
         public async Task<ActionResult> DeleteKanji(int id)
         {
             var kanji = await _db.Kanjis.FindAsync(id);
+
             if (kanji == null)
             {
-                return NotFound();
+                return NotFound(new { errors = "There is no such a kanji." });
             }
 
             _db.Kanjis.Remove(kanji);
@@ -148,20 +171,6 @@ namespace EasyKanjiServer.Controllers
         private static KanjiDTO KanjiToDTO(Kanji kanji)
         {
             return new KanjiDTO { Id = kanji.Id, KunReadings = kanji.KunReadings, Meaning = kanji.Meaning, OnReadings = kanji.OnReadings, Writing = kanji.Writing };
-        }
-
-        private async Task<bool> KanjiExists(int id)
-        {
-            var E = await _db.Kanjis.FindAsync(id);
-            if (E == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-            
         }
     }
 }

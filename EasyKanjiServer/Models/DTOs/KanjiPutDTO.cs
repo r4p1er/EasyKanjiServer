@@ -2,8 +2,9 @@
 
 namespace EasyKanjiServer.Models.DTOs
 {
-    public class KanjiPostDTO
+    public class KanjiPutDTO
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "Writing can't be unspecified.")]
         public string Writing { get; set; } = string.Empty;
         public string OnReadings { get; set; } = string.Empty;
