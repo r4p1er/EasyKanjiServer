@@ -26,6 +26,7 @@ namespace EasyKanjiServer.Controllers
         public async Task<ActionResult> GetToken(TokenDTO dto)
         {
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == dto.Username);
+
             if (user == null)
             {
                 return NotFound();
@@ -48,7 +49,8 @@ namespace EasyKanjiServer.Controllers
                 expires: DateTime.UtcNow.AddDays(30),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AuthOptions:KEY"]!)), SecurityAlgorithms.HmacSha256)
             );
-            return new JsonResult(new JwtSecurityTokenHandler().WriteToken(jwt));
+
+            return new JsonResult(new { accessToken = new JwtSecurityTokenHandler().WriteToken(jwt), roles = new string[] { user.Role } });
         }
     }
 }
