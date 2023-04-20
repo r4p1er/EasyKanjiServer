@@ -50,7 +50,7 @@ namespace EasyKanjiServer.Controllers
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AuthOptions:KEY"]!)), SecurityAlgorithms.HmacSha256)
             );
 
-            return new JsonResult(new { accessToken = new JwtSecurityTokenHandler().WriteToken(jwt), roles = new string[] { user.Role } });
+            return new JsonResult(new { accessToken = new JwtSecurityTokenHandler().WriteToken(jwt), roles = new string[] { user.Role }, id = user.Id });
         }
     }
 }

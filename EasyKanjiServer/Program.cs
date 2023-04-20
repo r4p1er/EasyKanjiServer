@@ -38,8 +38,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 var app = builder.Build();
 app.UseCors();
-app.UseMiddleware<JWTCheckMiddleware>();
 app.UseAuthentication();
+app.UseMiddleware<JWTCheckMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 
