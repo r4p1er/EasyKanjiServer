@@ -32,7 +32,6 @@ namespace EasyKanjiServer.Controllers
             }
 
             return KanjiToDTO(kanji);
-
         }
 
         [HttpGet]
@@ -98,7 +97,12 @@ namespace EasyKanjiServer.Controllers
             return NotFound(new { errors = "There is no such a list." });
         }
 
-        
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<KanjiDTO>>> Search([FromQuery] string search)
+        {
+            return await _db.Kanjis.Where(x => x.Writing.Contains(search) || x.OnReadings.Contains(search) || x.KunReadings.Contains(search) || x.Meaning.Contains(search))
+                                   .Select(x => KanjiToDTO(x)).ToListAsync();
+        }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -121,31 +125,26 @@ namespace EasyKanjiServer.Controllers
             return CreatedAtAction(nameof(GetKanji), new {id =  kanji.Id}, kanjiDTO);
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutKanji(int id, KanjiPutDTO dto)
+        public async Task<IActionResult> PutKanji(int id, KanjiPatchDTO dto)
         { 
-            if (id != dto.Id)
-            {
-                return BadRequest(new { errors = "Id from route params and object id should be equal." });
-            }
-
             if (string.IsNullOrWhiteSpace(dto.OnReadings) && string.IsNullOrWhiteSpace(dto.KunReadings))
             {
                 return BadRequest(new { errors = "On readings and kun readings can't be unspecified at the same time." });
             }
 
-            var kanji = await _db.Kanjis.FindAsync(dto.Id);
+            var kanji = await _db.Kanjis.FindAsync(id);
 
             if (kanji == null)
             {
                 return BadRequest(new { errors = "There is no such a kanji." });
             }
 
-            kanji.Writing = dto.Writing;
-            kanji.KunReadings = dto.KunReadings;
-            kanji.OnReadings = dto.OnReadings;
-            kanji.Meaning = dto.Meaning;
+            kanji.Writing = !string.IsNullOrWhiteSpace(dto.Writing) ? dto.Writing : kanji.Writing;
+            kanji.KunReadings = !string.IsNullOrWhiteSpace(dto.KunReadings) ? dto.KunReadings : kanji.KunReadings;
+            kanji.OnReadings = !string.IsNullOrWhiteSpace(dto.OnReadings) ? dto.OnReadings : kanji.OnReadings;
+            kanji.Meaning = !string.IsNullOrWhiteSpace(dto.Meaning) ? dto.Meaning : kanji.Meaning;
             await _db.SaveChangesAsync();
 
             return NoContent();
