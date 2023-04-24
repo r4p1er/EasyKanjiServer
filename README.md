@@ -29,7 +29,7 @@ The website which purpose is to help people to learn japanese kanji
 | :---------------------------: | :-------------------------------: | :-------: | :------------: | :-------------------------------: | :------------------------: |
 | GET /api/kanjis/{id}          | Get kanji by id                                                |  None     | None           | None                              | Kanji                      |
 | GET /api/kanjis               | Get array of kanjis by ids                                     | None      | Array of ids   | None                              | Array of kanjis            |
-| GET /api/kanjis/{listName}    | Get slice of kanjis from a specified list: popular or favorite | Any       | Two integers: start id and end id           | None                              | Array of kanjis                       |
+| GET /api/kanjis/{listName}    | Get slice of kanjis from a specified list: popular or favorite | None       | Two integers: start id and end id           | None                              | Array of kanjis                       |
 | GET /api/kanjis/search        | Get array of kanjis by search string | None      | Search string: writing, readings, meanings, etc. | None | Array of kanjis  |
 | POST /api/kanjis              | Create new kanji                | Admin     | None           | Kanji object: writing, on reading, kun reading, meaning | Kanji                 |
 | PATCH /api/kanjis/{id}        | Modify existing kanji      | Admin       | None           | Changes: writing, readings, meanings | No content                 |
