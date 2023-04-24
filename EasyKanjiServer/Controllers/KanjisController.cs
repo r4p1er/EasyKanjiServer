@@ -81,6 +81,11 @@ namespace EasyKanjiServer.Controllers
             {
                 var user = await _db.Users.Include(v => v.Kanjis).FirstOrDefaultAsync(v => v.Username == User.FindFirstValue(ClaimTypes.Name));
 
+                if (user == null)
+                {
+                    return BadRequest(new { errors = "Only authorized user can get favorite kanjis." });
+                }
+
                 for (int i = startIndex; i <= endIndex; i++)
                 {
                     var kanji = user!.Kanjis.FirstOrDefault(v => v.Id == i);
