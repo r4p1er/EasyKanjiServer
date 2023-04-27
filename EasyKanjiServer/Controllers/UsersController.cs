@@ -138,7 +138,7 @@ namespace EasyKanjiServer.Controllers
             return NoContent();
         }
 
-        [HttpPatch("kanji/{method:alpha}")]
+        [HttpPatch("kanjis/{method:alpha}")]
         [Authorize]
         public async Task<ActionResult> AddKanjis(string method, int[] ids)
         {
