@@ -28,9 +28,9 @@ The website which purpose is to help people to learn japanese kanji
 |  API                          | Description                       | Authorize | Request Params | Request Body                      | Response Body              |
 | :---------------------------: | :-------------------------------: | :-------: | :------------: | :-------------------------------: | :------------------------: |
 | GET /api/kanjis/{id}          | Get kanji by id                                                |  None     | None           | None                              | Kanji                      |
-| GET /api/kanjis               | Get array of kanjis by ids                                     | None      | Array of ids   | None                              | Array of kanjis            |
-| GET /api/kanjis/{listName}    | Get slice of kanjis from a specified list: popular or favorite | None       | Two integers: start id and end id           | None                              | Array of kanjis                       |
-| GET /api/kanjis/search        | Get array of kanjis by search string | None      | Search string: writing, readings, meanings, etc. | None | Array of kanjis  |
+| GET /api/kanjis               | Get array of kanjis by ids                                     | None      | Array of ids (e.g. ?ids=1&ids=2&ids=3 etc.)   | None                              | Array of kanjis            |
+| GET /api/kanjis/{listName}    | Get slice of kanjis from a specified list: popular or favorite | None       | Two integers: start id and end id (e.g. ?s=5&e=10)           | None                              | Array of kanjis                       |
+| GET /api/kanjis/search        | Get array of kanjis by search string | None      | Search string: writing, readings, meanings, etc. (e.g. ?q=人) | None | Array of kanjis  |
 | POST /api/kanjis              | Create new kanji                | Admin     | None           | Kanji object: writing, on reading, kun reading, meaning | Kanji                 |
 | PATCH /api/kanjis/{id}        | Modify existing kanji      | Admin       | None           | Changes: writing, readings, meanings | No content                 |
 | DELETE /api/kanjis/{id}       | Delete kanji by id               | Admin       | None           | None                              | No content                 |
