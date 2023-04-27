@@ -19,8 +19,8 @@ The website which purpose is to help people to learn japanese kanji
 | GET /api/users/me             | Get current user                | Any       | None           | None                              | User                       |
 | POST /api/users               | Create new user                 | None      | None           | Username and password             | User                       |
 | PATCH /api/users/{id}         | Change user's credentials       | Any       | None           | Changes: username, password, role | No content                 |
-| PATCH /api/users/kanji/add    | Add kanjis to current user      | Any       | None           | Array of id of kanjis             | No content                 |
-| PATCH /api/users/kanji/remove | Remove kanjis from current user | Any       | None           | Array of id of kanjis             | No content                 |
+| PATCH /api/users/kanjis/add    | Add kanjis to current user      | Any       | None           | Array of id of kanjis             | No content                 |
+| PATCH /api/users/kanjis/remove | Remove kanjis from current user | Any       | None           | Array of id of kanjis             | No content                 |
 | DELETE /api/users/{id}        | Delete user by id               | Any       | None           | None                              | No content                 |
 
 ### Kanjis
