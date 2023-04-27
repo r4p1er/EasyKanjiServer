@@ -43,9 +43,7 @@ namespace EasyKanjiServer.Controllers
             {
                 var kanji = await _db.Kanjis.FindAsync(id);
 
-                if (kanji == null)
-                    return NotFound(new { errors = "There is no such a kanji." });
-                else
+                if (kanji != null)
                     kanjis.Add(KanjiToDTO(kanji));
             }
 
@@ -53,9 +51,9 @@ namespace EasyKanjiServer.Controllers
         }
 
         [HttpGet("{listName:alpha}")]
-        public async Task<ActionResult<IEnumerable<KanjiDTO>>> GetKanjisByListName(string listName, int startIndex = 1, int endIndex = 1)
+        public async Task<ActionResult<IEnumerable<KanjiDTO>>> GetKanjisByListName(string listName, int s = 1, int e = 1)
         {
-            if (startIndex > endIndex)
+            if (s > e)
             {
                 return BadRequest(new { errors = "Start id can't be greater than end id." });
             }
@@ -64,14 +62,12 @@ namespace EasyKanjiServer.Controllers
             
             if (listName == "popular")
             {
-                for (int i = startIndex; i <= endIndex; i++)
+                for (int i = s; i <= e; i++)
                 {
                     var kanji = await _db.Kanjis.FindAsync(i);
 
-                    if (kanji == null)
-                        return NotFound(new { errors = "There is no such a kanji." });
-
-                    kanjis.Add(KanjiToDTO(kanji));
+                    if (kanji != null)
+                        kanjis.Add(KanjiToDTO(kanji));
                 }
 
                 return kanjis;
@@ -86,13 +82,11 @@ namespace EasyKanjiServer.Controllers
                     return BadRequest(new { errors = "Only authorized user can get favorite kanjis." });
                 }
 
-                for (int i = startIndex; i <= endIndex; i++)
+                for (int i = s; i <= e; i++)
                 {
                     var kanji = user!.Kanjis.FirstOrDefault(v => v.Id == i);
 
-                    if (kanji == null)
-                        return NotFound(new { errors = "There is no such a kanji." });
-                    else
+                    if (kanji != null)
                         kanjis.Add(KanjiToDTO(kanji));
                 }
 
@@ -103,9 +97,9 @@ namespace EasyKanjiServer.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<KanjiDTO>>> Search([FromQuery] string search)
+        public async Task<ActionResult<IEnumerable<KanjiDTO>>> Search([FromQuery] string q)
         {
-            return await _db.Kanjis.Where(x => x.Writing.Contains(search) || x.OnReadings.Contains(search) || x.KunReadings.Contains(search) || x.Meaning.Contains(search))
+            return await _db.Kanjis.Where(x => x.Writing.Contains(q) || x.OnReadings.Contains(q) || x.KunReadings.Contains(q) || x.Meaning.Contains(q))
                                    .Select(x => KanjiToDTO(x)).ToListAsync();
         }
 
