@@ -91,12 +91,12 @@ namespace EasyKanjiServer.Controllers
 
             if (!self && User.IsInRole("User"))
             {
-                return BadRequest(new { errors = "You can't edit other people's data." });
+                return Forbid();
             }
 
             if (!string.IsNullOrWhiteSpace(dto.Username) && !self)
             {
-                return BadRequest(new { errors = "Only the user can edit its own username." });
+                return Forbid();
             }
 
             if (!string.IsNullOrWhiteSpace(dto.Username) && await _db.Users.FirstOrDefaultAsync(x => x.Username == dto.Username) != null)
@@ -111,7 +111,7 @@ namespace EasyKanjiServer.Controllers
 
             if (!string.IsNullOrWhiteSpace(dto.Password) && !self)
             {
-                return BadRequest(new { errors = "Only the user can edit its own password." });
+                return Forbid();
             }
 
             if (!string.IsNullOrWhiteSpace(dto.Password) && (dto.Password.Length < 6 || dto.Password.Length > 24))
@@ -121,7 +121,7 @@ namespace EasyKanjiServer.Controllers
 
             if (!string.IsNullOrWhiteSpace(dto.Role) && (User.IsInRole("User") || user.Username == "admin"))
             {
-                return BadRequest(new { errors = "You are not allowed to change role of this user." });
+                return Forbid();
             }
 
             if (!string.IsNullOrWhiteSpace(dto.Role) && dto.Role != "User" && dto.Role != "Admin")
@@ -189,7 +189,7 @@ namespace EasyKanjiServer.Controllers
 
             if ((user.Username != User.FindFirstValue(ClaimTypes.Name) && User.IsInRole("User")) || user.Username == "admin")
             {
-                return BadRequest(new { errors = "You can't delete this user." });
+                return Forbid();
             }
 
             _db.Users.Remove(user);

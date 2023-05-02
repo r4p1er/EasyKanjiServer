@@ -7,6 +7,7 @@ using EasyKanjiServer.Models.DTOs;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.Xml.Linq;
 
 namespace EasyKanjiServer.Controllers
 {
@@ -99,8 +100,28 @@ namespace EasyKanjiServer.Controllers
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<KanjiDTO>>> Search([FromQuery] string q)
         {
-            return await _db.Kanjis.Where(x => x.Writing.Contains(q) || x.OnReadings.Contains(q) || x.KunReadings.Contains(q) || x.Meaning.Contains(q))
-                                   .Select(x => KanjiToDTO(x)).ToListAsync();
+            var result = new List<KanjiDTO>();
+
+            foreach (var comma in q.Split(',', StringSplitOptions.TrimEntries))
+            {
+                foreach (var japaneseComma in comma.Split('、', StringSplitOptions.TrimEntries))
+                {
+                    foreach (var japaneseSpace in japaneseComma.Split('　', StringSplitOptions.TrimEntries))
+                    {
+                        if (string.IsNullOrWhiteSpace(japaneseSpace)) continue;
+
+                        foreach (var kanji in await _db.Kanjis.ToListAsync())
+                        {
+                            if (kanji.Writing.Contains(japaneseSpace, StringComparison.InvariantCultureIgnoreCase) || kanji.KunReadings.Contains(japaneseSpace, StringComparison.InvariantCultureIgnoreCase) || kanji.OnReadings.Split(',').Any(x => x.Equals(japaneseSpace, StringComparison.InvariantCultureIgnoreCase)) || kanji.Meaning.Contains(japaneseSpace, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                result.Add(KanjiToDTO(kanji));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
 
         [HttpPost]
