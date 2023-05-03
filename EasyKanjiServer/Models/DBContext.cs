@@ -10,6 +10,7 @@ namespace EasyKanjiServer.Models
 
         public DbSet<User> Users { get; set; }
         public DbSet<Kanji> Kanjis { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
 
         public DBContext(DbContextOptions<DBContext> options, IConfiguration configuration, IWebHostEnvironment environment) : base(options) 
         {
