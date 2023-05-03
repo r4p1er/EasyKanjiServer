@@ -80,6 +80,11 @@ namespace EasyKanjiServer.Controllers
                 return BadRequest(new { errors = "You didn't provide any changes." });
             }
 
+            if (!BCrypt.Net.BCrypt.Verify(dto.PasswordCheck + _configuration["AuthOptions:PEPPER"], (await _db.Users.FirstOrDefaultAsync(x => x.Username == User.FindFirstValue(ClaimTypes.Name)))!.PasswordHash))
+            {
+                return BadRequest(new { errors = "Your password is incorrect." });
+            }
+
             var user = await _db.Users.Include(x => x.Kanjis).FirstOrDefaultAsync(x => x.Id == id);
 
             if (user == null)

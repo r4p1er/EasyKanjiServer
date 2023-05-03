@@ -117,7 +117,7 @@ namespace EasyKanjiServer.Controllers
                             bool kunReadings = string.Concat(kanji.KunReadings.Split('.')).Contains(japaneseSpace, StringComparison.InvariantCultureIgnoreCase);
                             bool onReadings;
 
-                            if (japaneseSpace.Length > 2 && "ョュウクグスズツヅヌフブムユルオコゴソゾトドノホボモヨロ".Contains(japaneseSpace[japaneseSpace.Length - 2]) && "ウー".Contains(japaneseSpace[japaneseSpace.Length - 1]))
+                            if (japaneseSpace.Length >= 2 && "ョュウクグスズツヅヌフブムユルオコゴソゾトドノホボモヨロ".Contains(japaneseSpace[japaneseSpace.Length - 2]) && "ウー".Contains(japaneseSpace[japaneseSpace.Length - 1]))
                             {
                                 var alteredJapaneseSpace = japaneseSpace[japaneseSpace.Length - 1] == 'ウ' ? japaneseSpace.Substring(0, japaneseSpace.Length - 1) + 'ー' : japaneseSpace.Substring(0, japaneseSpace.Length - 1) + 'ウ';
                                 onReadings = kanji.OnReadings.Split(',').Any(x => x.Equals(japaneseSpace, StringComparison.InvariantCultureIgnoreCase) || x.Equals(alteredJapaneseSpace, StringComparison.InvariantCultureIgnoreCase));
