@@ -7,6 +7,6 @@
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set;} = string.Empty;
         public List<Kanji> Kanjis { get; set; } = new();
-        public List<Report> Reports { get; set; } = new();
+        public List<Feedback> Feedback { get; set; } = new();
     }
 }
