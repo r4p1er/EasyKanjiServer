@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using EasyKanjiServer.Models.DTOs;
+using System.Security.Cryptography;
 
 namespace EasyKanjiServer.Controllers
 {
@@ -27,30 +28,60 @@ namespace EasyKanjiServer.Controllers
         {
             var user = await _db.Users.FirstOrDefaultAsync(x => x.Username == dto.Username);
 
-            if (user == null)
+            var randomNumber = new byte[32];
+            string rt;
+
+            using (var rng = RandomNumberGenerator.Create())
             {
-                return NotFound(new { errors = "There is no such a user." });
+                rng.GetBytes(randomNumber);
+                rt = Convert.ToBase64String(randomNumber);
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(dto.Password + _configuration["AuthOptions:PEPPER"], user.PasswordHash))
+            if (user != null)
             {
-                return BadRequest(new { errors = "Password is incorrect." });
+                if (!BCrypt.Net.BCrypt.Verify(dto.Password + _configuration["AuthOptions:PEPPER"], user.PasswordHash))
+                {
+                    return BadRequest(new { errors = "Password is incorrect." });
+                }
+            }
+            else
+            {
+                user = await _db.Users.FirstOrDefaultAsync(x => x.RefreshToken == dto.RefreshToken);
+
+                if (user == null)
+                {
+                    return BadRequest(new { errors = "Invalid credentials or refresh token." });
+                }
+
+                if (user.RefreshTokenExpiryTime < DateTime.Now)
+                {
+                    return BadRequest(new { errors = "Refresh token has expired." });
+                }
             }
 
+            user.RefreshToken = rt;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(1);
+            await _db.SaveChangesAsync();
+
+            return new JsonResult(new { accessToken = WriteJWT(user), refreshToken = user.RefreshToken, roles = new string[] { user.Role }, id = user.Id });
+        }
+
+        private string WriteJWT(User user)
+        {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, dto.Username),
+                new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role)
             };
             var jwt = new JwtSecurityToken(
                 issuer: _configuration["AuthOptions:ISSUER"],
                 audience: _configuration["AuthOptions:AUDIENCE"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(30),
+                expires: DateTime.Now.AddMinutes(20),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AuthOptions:KEY"]!)), SecurityAlgorithms.HmacSha256)
             );
 
-            return new JsonResult(new { accessToken = new JwtSecurityTokenHandler().WriteToken(jwt), roles = new string[] { user.Role }, id = user.Id });
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
     }
 }
