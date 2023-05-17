@@ -6,16 +6,13 @@ namespace EasyKanjiServer.Models
     public class DBContext : DbContext
     {
         private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
 
         public DbSet<User> Users { get; set; }
         public DbSet<Kanji> Kanjis { get; set; }
 
-        public DBContext(DbContextOptions<DBContext> options, IConfiguration configuration, IWebHostEnvironment environment) : base(options) 
+        public DBContext(DbContextOptions<DBContext> options, IConfiguration configuration) : base(options) 
         {
             _configuration = configuration;
-            _environment = environment;
-            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -23,9 +20,9 @@ namespace EasyKanjiServer.Models
             modelBuilder.Entity<User>().HasData(new User { Id = 1, Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword(_configuration["AuthOptions:AdminPassword"] + _configuration["AuthOptions:PEPPER"]), Role = "Admin" });
             var kanjis = new List<Kanji>();
 
-            if (File.Exists(Path.Combine(_environment.ContentRootPath, "kanjis.json")))
+            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "kanjis.json")))
             {
-                using (var reader = new StreamReader(Path.Combine(_environment.ContentRootPath, "kanjis.json"), System.Text.Encoding.Unicode))
+                using (var reader = new StreamReader(Path.Combine(Directory.GetCurrentDirectory(), "kanjis.json"), System.Text.Encoding.Unicode))
                 {
                     using (var json = JsonDocument.Parse(reader.ReadToEnd()))
                     {
@@ -33,7 +30,7 @@ namespace EasyKanjiServer.Models
 
                         foreach (var item in json.RootElement.EnumerateArray())
                         {
-                            kanjis.Add(new Kanji { Id = i++, Writing = item.GetProperty("writing").GetString()!, KunReadings = string.Join(',', item.GetProperty("kunreadings").EnumerateArray()), OnReadings = string.Join(',', item.GetProperty("onreadings").EnumerateArray()), Meaning = item.GetProperty("meaning").GetString()! });
+                            kanjis.Add(new Kanji { Id = i++, Writing = item.GetProperty("writing").GetString() ?? "", KunReadings = string.Join(',', item.GetProperty("kunreadings").EnumerateArray()), OnReadings = string.Join(',', item.GetProperty("onreadings").EnumerateArray()), Meaning = item.GetProperty("meaning").GetString() ?? "" });
                         }
                     }
                 }
