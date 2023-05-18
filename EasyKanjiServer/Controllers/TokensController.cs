@@ -48,7 +48,7 @@ namespace EasyKanjiServer.Controllers
             {
                 user = await _db.Users.FirstOrDefaultAsync(x => x.RefreshToken == dto.RefreshToken);
 
-                if (user == null)
+                if (user == null || string.IsNullOrWhiteSpace(dto.RefreshToken))
                 {
                     return BadRequest(new { errors = "Invalid credentials or refresh token." });
                 }
