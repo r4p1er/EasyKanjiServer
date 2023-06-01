@@ -12,7 +12,20 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy => policy.WithOrigins(builder.Configuration["Cors:Origin"]!).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 
-string connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
+string connection;
+
+if (builder.Environment.IsDevelopment())
+{
+    connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
+}
+else
+{
+    string host = Environment.GetEnvironmentVariable("Connection__HOST")!;
+    string name = Environment.GetEnvironmentVariable("Connection__NAME")!;
+    string password = Environment.GetEnvironmentVariable("Connection__PASSWORD")!;
+    connection = $"Data Source={host};Initial Catalog={name};User ID=sa;Password={password};TrustServerCertificate=true";
+}
+
 builder.Services.AddDbContext<DBContext>(options => options.UseSqlServer(connection));
 
 builder.Services.AddStackExchangeRedisCache(options =>

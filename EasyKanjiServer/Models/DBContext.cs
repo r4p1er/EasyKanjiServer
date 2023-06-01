@@ -14,6 +14,7 @@ namespace EasyKanjiServer.Models
         public DBContext(DbContextOptions<DBContext> options, IConfiguration configuration) : base(options) 
         {
             _configuration = configuration;
+            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
