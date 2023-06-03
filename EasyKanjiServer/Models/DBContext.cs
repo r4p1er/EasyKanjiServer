@@ -14,7 +14,11 @@ namespace EasyKanjiServer.Models
         public DBContext(DbContextOptions<DBContext> options, IConfiguration configuration) : base(options) 
         {
             _configuration = configuration;
-            Database.EnsureCreated();
+
+            if (_configuration["ENV"] == "production")
+            {
+                Database.EnsureCreated();
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
